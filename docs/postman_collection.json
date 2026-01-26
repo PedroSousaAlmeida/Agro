@@ -12,6 +12,21 @@
 			"type": "string"
 		},
 		{
+			"key": "keycloak_url",
+			"value": "http://localhost:9090",
+			"type": "string"
+		},
+		{
+			"key": "keycloak_realm",
+			"value": "agro-realm",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "monitoramento_id",
 			"value": "",
 			"type": "string"
@@ -28,6 +43,112 @@
 		}
 	],
 	"item": [
+		{
+			"name": "Authentication (Keycloak)",
+			"item": [
+				{
+					"name": "Login and Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set('access_token', jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "agro-api",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "testuser",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{keycloak_url}}/realms/{{keycloak_realm}}/protocol/openid-connect/token",
+							"host": [
+								"{{keycloak_url}}"
+							],
+							"path": [
+								"realms",
+								"{{keycloak_realm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						},
+						"description": "Faça login com um usuário do Keycloak para obter um token de acesso.\n\nEste request usa os valores padrão `testuser`/`password`. Após a execução, o `access_token` será salvo automaticamente como uma variável da coleção para ser usado nos endpoints protegidos."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get Current User (/me)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"me"
+							]
+						},
+						"description": "Retorna as informações (claims) do usuário autenticado.\n\n**Requer autenticação.** Execute o request 'Login and Get Token' primeiro para obter e salvar o token de acesso."
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Health",
 			"item": [

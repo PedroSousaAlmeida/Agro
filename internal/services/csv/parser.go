@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 
@@ -55,8 +56,20 @@ type ParseError struct {
 
 // Parse processa o CSV e retorna as áreas de monitoramento
 func (p *Parser) Parse(reader io.Reader, monitoramentoID string) (*ParseResult, error) {
-	csvReader := csv.NewReader(reader)
-	csvReader.Comma = ';'
+	// Lê todo o conteúdo para detectar o separador
+	content, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, fmt.Errorf("%w: erro ao ler arquivo: %v", sharedErrors.ErrInvalidCSV, err)
+	}
+
+	// Remove BOM (Byte Order Mark) se existir
+	contentStr := strings.TrimPrefix(string(content), "\ufeff")
+
+	// Detecta o separador (TAB, ; ou ,)
+	separator := p.detectSeparator(contentStr)
+
+	csvReader := csv.NewReader(strings.NewReader(contentStr))
+	csvReader.Comma = separator
 	csvReader.LazyQuotes = true
 	csvReader.TrimLeadingSpace = true
 
@@ -124,7 +137,9 @@ func (p *Parser) mapColumns(header []string) (map[string]int, []string, error) {
 		header[i] = col
 		colIndex[col] = i
 
-		if col == "Restrição" || col == "Restricao" {
+		// Detecta coluna Restrição (com ou sem acento)
+		colLower := strings.ToLower(col)
+		if strings.Contains(colLower, "restri") {
 			restricaoIndex = i
 		}
 		// Encontra onde começam os herbicidas (fim das pragas)
@@ -148,11 +163,15 @@ func (p *Parser) mapColumns(header []string) (map[string]int, []string, error) {
 		}
 	}
 
+	log.Printf("[DEBUG] restricaoIndex=%d, herbIndex=%d, totalColunas=%d", restricaoIndex, herbIndex, len(header))
+
 	if restricaoIndex >= 0 {
 		endIndex := len(header)
 		if herbIndex > restricaoIndex {
 			endIndex = herbIndex
 		}
+
+		log.Printf("[DEBUG] Buscando pragas de %d até %d", restricaoIndex+1, endIndex)
 
 		for i := restricaoIndex + 1; i < endIndex; i++ {
 			colName := header[i]
@@ -163,6 +182,8 @@ func (p *Parser) mapColumns(header []string) (map[string]int, []string, error) {
 			pragaColumns = append(pragaColumns, colName)
 		}
 	}
+
+	log.Printf("[DEBUG] Pragas encontradas: %v", pragaColumns)
 
 	return colIndex, pragaColumns, nil
 }
@@ -196,8 +217,12 @@ func (p *Parser) parseRecord(record []string, colIndex map[string]int, pragaColu
 		}
 
 		valor := strings.TrimSpace(strings.ToUpper(record[idx]))
-		if valor == "S" || valor == "SIM" || valor == "1" || valor == "X" {
-			area.AddPraga(pragaName)
+		// Aceita: S, SIM, 1, X (presença simples) ou A, B, M (nível: Alta, Baixa, Média)
+		switch valor {
+		case "A", "B", "M":
+			area.PragasData.AddPragaComNivel(pragaName, valor)
+		case "S", "SIM", "1", "X":
+			area.PragasData.AddPragaComNivel(pragaName, "X")
 		}
 	}
 
@@ -229,4 +254,23 @@ func (p *Parser) getFloat(record []string, colIndex map[string]int, colName stri
 	str = strings.Replace(str, ",", ".", 1)
 	val, _ := strconv.ParseFloat(str, 64)
 	return val
+}
+
+// detectSeparator detecta o separador usado no CSV (TAB, ; ou ,)
+func (p *Parser) detectSeparator(content string) rune {
+	firstLine := strings.Split(content, "\n")[0]
+
+	tabCount := strings.Count(firstLine, "\t")
+	semicolonCount := strings.Count(firstLine, ";")
+
+	// Prioriza TAB se tiver muitos
+	if tabCount > 5 {
+		return '\t'
+	}
+	// Prioriza ; se tiver (comum em CSVs brasileiros)
+	if semicolonCount > 5 {
+		return ';'
+	}
+	// Fallback para vírgula
+	return ','
 }

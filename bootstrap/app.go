@@ -16,8 +16,10 @@ import (
 	monitoringHandler "agro-monitoring/internal/modules/monitoring/handler"
 	monitoringRepo "agro-monitoring/internal/modules/monitoring/repository"
 	monitoringUsecase "agro-monitoring/internal/modules/monitoring/usecase"
+	userHandler "agro-monitoring/internal/modules/user/handler"
 	"agro-monitoring/internal/services/csv"
 	"agro-monitoring/internal/services/queue"
+	sharedMiddleware "agro-monitoring/internal/shared/middleware"
 )
 
 // Application contém todas as dependências
@@ -28,6 +30,7 @@ type Application struct {
 	QueueSvc    queue.Service
 	Router      http.Handler
 	JobsUseCase jobsUsecase.JobUseCase
+	Auth        *sharedMiddleware.Authenticator
 }
 
 // NewApplication cria a aplicação com todas as dependências
@@ -35,6 +38,12 @@ func NewApplication() (*Application, error) {
 	env := NewEnv()
 
 	db, err := NewDatabase(env)
+	if err != nil {
+		return nil, err
+	}
+
+	// Auth
+	auth, err := sharedMiddleware.NewAuthenticator(env)
 	if err != nil {
 		return nil, err
 	}
@@ -79,9 +88,10 @@ func NewApplication() (*Application, error) {
 	monHandler := monitoringHandler.NewHandler(monUC)
 	areaHdlr := areaHandler.NewHandler(areaUC)
 	jobHdlr := jobsHandler.NewHandler(jobUC)
+	userHdlr := userHandler.NewUserHandler()
 
 	// Router
-	router := SetupRoutes(monHandler, areaHdlr, jobHdlr)
+	router := SetupRoutes(monHandler, areaHdlr, jobHdlr, userHdlr, auth)
 
 	return &Application{
 		Env:         env,
@@ -90,6 +100,7 @@ func NewApplication() (*Application, error) {
 		QueueSvc:    queueSvc,
 		Router:      router,
 		JobsUseCase: jobUC,
+		Auth:        auth,
 	}, nil
 }
 

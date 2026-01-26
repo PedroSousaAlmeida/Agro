@@ -16,6 +16,7 @@ type PragasData struct {
 // PragaInfo contém informações de uma praga específica
 type PragaInfo struct {
 	Presente   bool                     `json:"presente"`
+	Nivel      string                   `json:"nivel,omitempty"` // A=Alta, B=Baixa, M=Média, X=Presente
 	Aplicacoes []AplicacaoHerbicidaJson `json:"aplicacoes,omitempty"`
 }
 
@@ -33,13 +34,19 @@ func NewPragasData() PragasData {
 	}
 }
 
-// AddPraga adiciona uma praga presente
+// AddPraga adiciona uma praga presente com nível opcional
 func (p *PragasData) AddPraga(nome string) {
+	p.AddPragaComNivel(nome, "")
+}
+
+// AddPragaComNivel adiciona uma praga com nível (A=Alta, B=Baixa, M=Média, X=Presente)
+func (p *PragasData) AddPragaComNivel(nome, nivel string) {
 	if p.Pragas == nil {
 		p.Pragas = make(map[string]PragaInfo)
 	}
 	p.Pragas[nome] = PragaInfo{
 		Presente:   true,
+		Nivel:      nivel,
 		Aplicacoes: []AplicacaoHerbicidaJson{},
 	}
 }

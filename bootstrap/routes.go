@@ -9,11 +9,12 @@ import (
 	areaHandler "agro-monitoring/internal/modules/area/handler"
 	jobsHandler "agro-monitoring/internal/modules/jobs/handler"
 	monitoringHandler "agro-monitoring/internal/modules/monitoring/handler"
+	userHandler "agro-monitoring/internal/modules/user/handler"
 	sharedMiddleware "agro-monitoring/internal/shared/middleware"
 )
 
 // SetupRoutes configura todas as rotas da aplicação
-func SetupRoutes(monHandler *monitoringHandler.Handler, areaHdlr *areaHandler.Handler, jobHdlr *jobsHandler.Handler) http.Handler {
+func SetupRoutes(monHandler *monitoringHandler.Handler, areaHdlr *areaHandler.Handler, jobHdlr *jobsHandler.Handler, userHdlr *userHandler.UserHandler, auth *sharedMiddleware.Authenticator) http.Handler {
 	r := chi.NewRouter()
 
 	// Middlewares
@@ -30,9 +31,16 @@ func SetupRoutes(monHandler *monitoringHandler.Handler, areaHdlr *areaHandler.Ha
 
 	// API v1
 	r.Route("/v1", func(r chi.Router) {
+		// Public routes
 		monHandler.RegisterRoutes(r)
 		areaHdlr.RegisterRoutes(r)
 		jobHdlr.RegisterRoutes(r)
+
+		// Protected routes
+		r.Route("/users", func(r chi.Router) {
+			r.Use(auth.Auth)
+			userHdlr.RegisterRoutes(r)
+		})
 	})
 
 	return r
