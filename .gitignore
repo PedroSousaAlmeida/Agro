@@ -1,0 +1,4 @@
+.env
+api.exe
+migrate.exe
+worker.exe

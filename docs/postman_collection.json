@@ -1,0 +1,327 @@
+{
+	"info": {
+		"_postman_id": "agro-monitoring-api",
+		"name": "Agro Monitoring API",
+		"description": "API para monitoramento de áreas agrícolas com controle de pragas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "monitoramento_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "area_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "job_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Monitoramentos",
+			"item": [
+				{
+					"name": "Upload CSV",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('monitoramento_id', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/monitoramentos",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "monitoramentos"]
+						},
+						"description": "Upload de arquivo CSV com dados de monitoramento.\n\nO CSV deve ter separador `;` e conter as colunas:\n- Id, Setor, Setor2, Cod.Fazenda, Desc.Fazenda, Quadra, Corte, Área Total, Desc. Textura Solo, Corte Atual, Reforma, Mês Colheita, Restrição\n- Colunas após Restrição são interpretadas como pragas (S/N)"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Monitoramentos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/monitoramentos?page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "monitoramentos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Lista todos os uploads de CSV com paginação"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Monitoramento por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/monitoramentos/{{monitoramento_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "monitoramentos", "{{monitoramento_id}}"]
+						},
+						"description": "Retorna detalhes de um monitoramento específico"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Áreas",
+			"item": [
+				{
+					"name": "Listar Áreas por Monitoramento",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.collectionVariables.set('area_id', jsonData.data[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/areas?monitoramento_id={{monitoramento_id}}&page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "areas"],
+							"query": [
+								{
+									"key": "monitoramento_id",
+									"value": "{{monitoramento_id}}"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Lista todas as áreas de um monitoramento específico"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Área por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/areas/{{area_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "areas", "{{area_id}}"]
+						},
+						"description": "Retorna detalhes de uma área específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar por Fazenda",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/areas/search/fazenda?cod=FAZ001&page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "areas", "search", "fazenda"],
+							"query": [
+								{
+									"key": "cod",
+									"value": "FAZ001"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Busca áreas por código de fazenda (busca parcial)"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar por Praga",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/areas/search/praga?nome=Camalote&page=1&page_size=10",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "areas", "search", "praga"],
+							"query": [
+								{
+									"key": "nome",
+									"value": "Camalote"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Busca áreas que possuem uma praga específica"
+					},
+					"response": []
+				},
+				{
+					"name": "Adicionar/Atualizar Aplicação de Herbicida",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"praga\": \"Camalote\",\n    \"posicao\": 1,\n    \"herbicida\": \"Boral\",\n    \"dose\": 1.40\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/areas/{{area_id}}/aplicacao",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "areas", "{{area_id}}", "aplicacao"]
+						},
+						"description": "Adiciona ou atualiza uma aplicação de herbicida numa posição específica.\n\nCampos:\n- praga: nome da praga (deve existir na área)\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem aplicada\n\nSe já existir aplicação na posição, será substituída (upsert)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Jobs (Processamento em Massa)",
+			"item": [
+				{
+					"name": "Criar Job - Bulk Aplicações",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set('job_id', jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aplicacoes\": [\n        {\n            \"area_id\": \"{{area_id}}\",\n            \"praga\": \"Camalote\",\n            \"posicao\": 1,\n            \"herbicida\": \"Boral\",\n            \"dose\": 1.40\n        },\n        {\n            \"area_id\": \"{{area_id}}\",\n            \"praga\": \"Camalote\",\n            \"posicao\": 2,\n            \"herbicida\": \"Roundup\",\n            \"dose\": 2.00\n        },\n        {\n            \"area_id\": \"{{area_id}}\",\n            \"praga\": \"Vassoura\",\n            \"posicao\": 1,\n            \"herbicida\": \"Hexagon\",\n            \"dose\": 1.80\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/jobs/aplicacoes",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "jobs", "aplicacoes"]
+						},
+						"description": "Cria um job para processar aplicações de herbicida em massa.\n\nCampos de cada item:\n- area_id: ID da área\n- praga: nome da praga\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem\n\nO job é processado em background pelo Worker.\nUse GET /v1/jobs/{id} para acompanhar o progresso.\n\nSe enviar mesma area_id + praga + posicao mais de uma vez, a última sobrescreve (upsert)."
+					},
+					"response": []
+				},
+				{
+					"name": "Status do Job",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/jobs/{{job_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "jobs", "{{job_id}}"]
+						},
+						"description": "Retorna o status atual do job.\n\nStatus possíveis:\n- pending: aguardando processamento\n- processing: em processamento\n- completed: concluído com sucesso\n- failed: falhou"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

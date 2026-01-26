@@ -1,0 +1,6 @@
+Id;Setor;Setor2;Cod.Fazenda;Desc.Fazenda;Quadra;Corte;Área Total;Desc. Textura Solo;Corte Atual;Reforma;Mês Colheita;Restrição;Camalote;Grama seda;Coloniao;Vassoura;Braquiária;Mamona;Mucuna;Corda Viola;Tiririca
+1;Norte;Sub1;FAZ001;Fazenda São João;Q1;3;150,5;Argiloso;2;2020;Agosto;Nenhuma;S;S;N;S;N;N;S;N;S
+2;Norte;Sub1;FAZ001;Fazenda São João;Q2;4;180,25;Argiloso;3;2020;Setembro;Nenhuma;S;N;N;N;N;N;N;N;S
+3;Sul;Sub2;FAZ002;Fazenda Boa Vista;Q1;2;200,75;Arenoso;1;2021;Outubro;APP;N;S;S;S;N;N;N;S;N
+4;Sul;Sub2;FAZ002;Fazenda Boa Vista;Q2;3;175,0;Arenoso;2;2021;Novembro;APP;N;N;S;S;S;N;N;N;N
+5;Leste;Sub3;FAZ003;Fazenda Santa Maria;Q1;5;220,5;Argiloso;4;2019;Julho;Nenhuma;S;S;S;N;N;S;S;N;S
