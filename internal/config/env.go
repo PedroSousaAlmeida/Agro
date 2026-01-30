@@ -27,9 +27,13 @@ type Env struct {
 	RedisPassword string
 	RedisDB       int
 	// Keycloak
-	KeycloakURL      string
-	KeycloakRealm    string
-	KeycloakClientID string
+	KeycloakURL               string
+	KeycloakRealm             string
+	KeycloakClientID          string
+	KeycloakAdminClientID     string
+	KeycloakAdminClientSecret string
+	// App
+	AppBaseURL string
 }
 
 // NewEnv carrega as variáveis de ambiente
@@ -48,9 +52,13 @@ func NewEnv() *Env {
 		RedisPassword: getEnv("REDIS_PASSWORD", ""),
 		RedisDB:       getEnvInt("REDIS_DB", 0),
 		// Keycloak
-		KeycloakURL:      getEnv("KEYCLOAK_URL", "http://localhost:9090"),
-		KeycloakRealm:    getEnv("KEYCLOAK_REALM", "agro-realm"),
-		KeycloakClientID: getEnv("KEYCLOAK_CLIENT_ID", "agro-api"),
+		KeycloakURL:               getEnv("KEYCLOAK_URL", "http://localhost:9090"),
+		KeycloakRealm:             getEnv("KEYCLOAK_REALM", "agro-realm"),
+		KeycloakClientID:          getEnv("KEYCLOAK_CLIENT_ID", "agro-api"),
+		KeycloakAdminClientID:     getEnv("KEYCLOAK_ADMIN_CLIENT_ID", "agro-admin"),
+		KeycloakAdminClientSecret: getEnv("KEYCLOAK_ADMIN_CLIENT_SECRET", ""),
+		// App
+		AppBaseURL: getEnv("APP_BASE_URL", "http://localhost:8080"),
 	}
 }
 

@@ -1,0 +1,3 @@
+ALTER TABLE monitoramentos DROP COLUMN IF EXISTS client_id, DROP COLUMN IF EXISTS user_id;
+ALTER TABLE areas_monitoramento DROP COLUMN IF EXISTS client_id, DROP COLUMN IF EXISTS user_id;
+ALTER TABLE jobs DROP COLUMN IF EXISTS client_id, DROP COLUMN IF EXISTS user_id;

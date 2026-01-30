@@ -1,4 +1,72 @@
+# Environment variables
 .env
-api.exe
-migrate.exe
-worker.exe
+.env.local
+.env.*.local
+
+# Binários Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+api
+migrate
+worker
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.txt
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# Build directories
+/tmp
+/dist
+/build
+/bin
+
+# Air (live reload)
+tmp/
+.air.toml.local
+
+# Logs
+*.log
+logs/
+
+# Test files
+test_*.json
+*_test_*.json
+test_bulk_aplicacoes.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+cmd/gentestjson/
+*.tmp
+*.bak
+*.backup
+
+# Database dumps
+*.sql.gz
+*.dump
+
+# Debug
+debug
+__debug_bin
+
+# Claude plans (optional - descomente se não quiser versionar)
+# .claude/plans/

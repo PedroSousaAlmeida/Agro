@@ -10,6 +10,10 @@ import (
 	areaHandler "agro-monitoring/internal/modules/area/handler"
 	areaRepo "agro-monitoring/internal/modules/area/repository"
 	areaUsecase "agro-monitoring/internal/modules/area/usecase"
+	clientsHandler "agro-monitoring/internal/modules/clients/handler"
+	clientsRepo "agro-monitoring/internal/modules/clients/repository"
+	clientsService "agro-monitoring/internal/modules/clients/service"
+	clientsUsecase "agro-monitoring/internal/modules/clients/usecase"
 	jobsHandler "agro-monitoring/internal/modules/jobs/handler"
 	jobsRepo "agro-monitoring/internal/modules/jobs/repository"
 	jobsUsecase "agro-monitoring/internal/modules/jobs/usecase"
@@ -70,9 +74,14 @@ func NewApplication() (*Application, error) {
 	monRepo := monitoringRepo.NewPostgresRepository(db)
 	areaRepository := areaRepo.NewPostgresRepository(db)
 	jobRepository := jobsRepo.NewPostgresRepository(db)
+	clientRepository := clientsRepo.NewPostgresRepository(db)
+	clientUserRepository := clientsRepo.NewClientUserPostgresRepository(db)
 
 	// Parser
 	csvParser := csv.NewParser(uuidGen)
+
+	// Keycloak Admin Service
+	keycloakSvc := clientsService.NewKeycloakService(env)
 
 	// Use cases
 	monUC := monitoringUsecase.NewMonitoringUseCase(monRepo, areaRepository, csvParser, uuidGen)
@@ -83,15 +92,17 @@ func NewApplication() (*Application, error) {
 		AreaRepo:      areaRepository,
 		Queue:         queueSvc,
 	})
+	clientUC := clientsUsecase.NewClientUseCase(clientRepository, clientUserRepository, keycloakSvc, uuidGen)
 
 	// Handlers
 	monHandler := monitoringHandler.NewHandler(monUC)
 	areaHdlr := areaHandler.NewHandler(areaUC)
 	jobHdlr := jobsHandler.NewHandler(jobUC)
 	userHdlr := userHandler.NewUserHandler()
+	clientsHdlr := clientsHandler.NewHandler(clientUC, env)
 
 	// Router
-	router := SetupRoutes(monHandler, areaHdlr, jobHdlr, userHdlr, auth)
+	router := SetupRoutes(monHandler, areaHdlr, jobHdlr, userHdlr, clientsHdlr, auth)
 
 	return &Application{
 		Env:         env,

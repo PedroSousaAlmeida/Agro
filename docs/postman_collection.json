@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "agro-monitoring-api",
 		"name": "Agro Monitoring API",
-		"description": "API para monitoramento de áreas agrícolas com controle de pragas",
+		"description": "API para monitoramento de áreas agrícolas com controle de pragas.\n\n**Importante:** Todas as rotas /v1/* requerem autenticação. Execute 'Login and Get Token' primeiro.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -38,6 +38,16 @@
 		},
 		{
 			"key": "job_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_slug",
 			"value": "",
 			"type": "string"
 		}
@@ -115,6 +125,25 @@
 			]
 		},
 		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Verifica se a API está funcionando. Esta rota é pública e não requer autenticação."
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Users",
 			"item": [
 				{
@@ -150,24 +179,6 @@
 			]
 		},
 		{
-			"name": "Health",
-			"item": [
-				{
-					"name": "Health Check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/health",
-							"host": ["{{base_url}}"],
-							"path": ["health"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Monitoramentos",
 			"item": [
 				{
@@ -187,6 +198,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -204,13 +225,23 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "monitoramentos"]
 						},
-						"description": "Upload de arquivo CSV com dados de monitoramento.\n\nO CSV deve ter separador `;` e conter as colunas:\n- Id, Setor, Setor2, Cod.Fazenda, Desc.Fazenda, Quadra, Corte, Área Total, Desc. Textura Solo, Corte Atual, Reforma, Mês Colheita, Restrição\n- Colunas após Restrição são interpretadas como pragas (S/N)"
+						"description": "Upload de arquivo CSV com dados de monitoramento.\n\n**Requer autenticação.**\n\nO CSV deve ter separador `;` e conter as colunas:\n- Id, Setor, Setor2, Cod.Fazenda, Desc.Fazenda, Quadra, Corte, Área Total, Desc. Textura Solo, Corte Atual, Reforma, Mês Colheita, Restrição\n- Colunas após Restrição são interpretadas como pragas (S/N)"
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Monitoramentos",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -228,13 +259,23 @@
 								}
 							]
 						},
-						"description": "Lista todos os uploads de CSV com paginação"
+						"description": "Lista todos os uploads de CSV com paginação.\n\n**Requer autenticação.**"
 					},
 					"response": []
 				},
 				{
 					"name": "Buscar Monitoramento por ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -242,7 +283,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "monitoramentos", "{{monitoramento_id}}"]
 						},
-						"description": "Retorna detalhes de um monitoramento específico"
+						"description": "Retorna detalhes de um monitoramento específico.\n\n**Requer autenticação.**"
 					},
 					"response": []
 				}
@@ -268,6 +309,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -289,13 +340,23 @@
 								}
 							]
 						},
-						"description": "Lista todas as áreas de um monitoramento específico"
+						"description": "Lista todas as áreas de um monitoramento específico.\n\n**Requer autenticação.**"
 					},
 					"response": []
 				},
 				{
 					"name": "Buscar Área por ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -303,13 +364,23 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "areas", "{{area_id}}"]
 						},
-						"description": "Retorna detalhes de uma área específica"
+						"description": "Retorna detalhes de uma área específica.\n\n**Requer autenticação.**"
 					},
 					"response": []
 				},
 				{
 					"name": "Buscar por Fazenda",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -331,13 +402,23 @@
 								}
 							]
 						},
-						"description": "Busca áreas por código de fazenda (busca parcial)"
+						"description": "Busca áreas por código de fazenda (busca parcial).\n\n**Requer autenticação.**"
 					},
 					"response": []
 				},
 				{
 					"name": "Buscar por Praga",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -359,13 +440,23 @@
 								}
 							]
 						},
-						"description": "Busca áreas que possuem uma praga específica"
+						"description": "Busca áreas que possuem uma praga específica.\n\n**Requer autenticação.**"
 					},
 					"response": []
 				},
 				{
 					"name": "Adicionar/Atualizar Aplicação de Herbicida",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -382,7 +473,252 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "areas", "{{area_id}}", "aplicacao"]
 						},
-						"description": "Adiciona ou atualiza uma aplicação de herbicida numa posição específica.\n\nCampos:\n- praga: nome da praga (deve existir na área)\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem aplicada\n\nSe já existir aplicação na posição, será substituída (upsert)."
+						"description": "Adiciona ou atualiza uma aplicação de herbicida numa posição específica.\n\n**Requer autenticação.**\n\nCampos:\n- praga: nome da praga (deve existir na área)\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem aplicada\n\nSe já existir aplicação na posição, será substituída (upsert)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "Register User (Public)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"joao@usinasantaclara.com\",\n    \"password\": \"senha123\",\n    \"first_name\": \"João\",\n    \"last_name\": \"Silva\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/register/{{client_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "register", "{{client_slug}}"]
+						},
+						"description": "Registra um novo usuário para um client específico.\n\n**Rota pública** (não requer autenticação).\n\nUse o slug do client na URL (ex: /v1/register/usina-santa-clara).\n\nO usuário será criado no Keycloak e associado ao client automaticamente."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/clients/me",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "clients", "me"]
+						},
+						"description": "Retorna informações do client do usuário autenticado.\n\n**Requer autenticação.**"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Client Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/clients/me/stats",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "clients", "me", "stats"]
+						},
+						"description": "Retorna estatísticas do client do usuário autenticado.\n\n**Requer autenticação.**\n\nInclui:\n- Usuários atuais\n- Vagas disponíveis\n- Total de monitoramentos\n- Total de áreas"
+					},
+					"response": []
+				},
+				{
+					"name": "List My Client Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/clients/me/users?page=1&page_size=20",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "clients", "me", "users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Lista todos os usuários do client do usuário autenticado.\n\n**Requer autenticação.**"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin - Clients",
+			"item": [
+				{
+					"name": "Create Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('client_id', jsonData.data.id);",
+									"    pm.collectionVariables.set('client_slug', jsonData.data.slug);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Usina Santa Clara\",\n    \"slug\": \"usina-santa-clara\",\n    \"max_users\": 15,\n    \"metadata\": {\n        \"cidade\": \"Ribeirão Preto\",\n        \"contato\": \"+55 16 99999-9999\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/admin/clients",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "admin", "clients"]
+						},
+						"description": "Cria um novo client (usina).\n\n**Requer autenticação e permissão de admin.**\n\nCampos:\n- name: Nome da usina\n- slug: URL única (apenas lowercase, números e hífen)\n- max_users: Limite de usuários\n- metadata: Dados extras (opcional)\n\nCria automaticamente um grupo no Keycloak."
+					},
+					"response": []
+				},
+				{
+					"name": "List Clients",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/admin/clients?page=1&page_size=20",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "admin", "clients"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Lista todos os clients com paginação.\n\n**Requer autenticação e permissão de admin.**"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/admin/clients/{{client_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "admin", "clients", "{{client_id}}"]
+						},
+						"description": "Busca um client por ID.\n\n**Requer autenticação e permissão de admin.**"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/admin/clients/{{client_id}}/stats",
+							"host": ["{{base_url}}"],
+							"path": ["v1", "admin", "clients", "{{client_id}}", "stats"]
+						},
+						"description": "Retorna estatísticas completas de um client.\n\n**Requer autenticação e permissão de admin.**\n\nInclui:\n- Usuários atuais vs. limite\n- Vagas disponíveis\n- Total de monitoramentos\n- Total de áreas"
 					},
 					"response": []
 				}
@@ -408,6 +744,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -424,13 +770,23 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "jobs", "aplicacoes"]
 						},
-						"description": "Cria um job para processar aplicações de herbicida em massa.\n\nCampos de cada item:\n- area_id: ID da área\n- praga: nome da praga\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem\n\nO job é processado em background pelo Worker.\nUse GET /v1/jobs/{id} para acompanhar o progresso.\n\nSe enviar mesma area_id + praga + posicao mais de uma vez, a última sobrescreve (upsert)."
+						"description": "Cria um job para processar aplicações de herbicida em massa.\n\n**Requer autenticação.**\n\nCampos de cada item:\n- area_id: ID da área\n- praga: nome da praga\n- posicao: número da aplicação (1, 2, 3, ...)\n- herbicida: nome do herbicida\n- dose: dosagem\n\nO job é processado em background pelo Worker.\nUse GET /v1/jobs/{id} para acompanhar o progresso.\n\nSe enviar mesma area_id + praga + posicao mais de uma vez, a última sobrescreve (upsert)."
 					},
 					"response": []
 				},
 				{
 					"name": "Status do Job",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -438,7 +794,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["v1", "jobs", "{{job_id}}"]
 						},
-						"description": "Retorna o status atual do job.\n\nStatus possíveis:\n- pending: aguardando processamento\n- processing: em processamento\n- completed: concluído com sucesso\n- failed: falhou"
+						"description": "Retorna o status atual do job.\n\n**Requer autenticação.**\n\nStatus possíveis:\n- pending: aguardando processamento\n- processing: em processamento\n- completed: concluído com sucesso\n- failed: falhou"
 					},
 					"response": []
 				}

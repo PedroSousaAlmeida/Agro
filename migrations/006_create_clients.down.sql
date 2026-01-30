@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS client_users;
+DROP TABLE IF EXISTS clients;

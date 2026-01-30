@@ -19,9 +19,10 @@ func NewUserHandler() *UserHandler {
 }
 
 // RegisterRoutes registers the user routes.
-// The grouping and middleware are handled in bootstrap/routes.go.
 func (h *UserHandler) RegisterRoutes(r chi.Router) {
-	r.Get("/me", h.Me)
+	r.Route("/users", func(r chi.Router) {
+		r.Get("/me", h.Me)
+	})
 }
 
 // Me is a handler to get the current user's information.

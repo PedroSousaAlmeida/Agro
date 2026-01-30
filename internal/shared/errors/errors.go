@@ -11,4 +11,11 @@ var (
 	ErrInvalidStatus             = errors.New("status inválido")
 	ErrPragaNotFound             = errors.New("praga não encontrada")
 	ErrInvalidPragaData          = errors.New("dados de praga inválidos")
+
+	// Clients
+	ErrClientNotFound         = errors.New("client não encontrado")
+	ErrClientInactive         = errors.New("client inativo")
+	ErrClientUserLimitReached = errors.New("limite de usuários atingido")
+	ErrDuplicateEmail         = errors.New("email já cadastrado para este client")
+	ErrInvalidSlug            = errors.New("slug inválido")
 )
